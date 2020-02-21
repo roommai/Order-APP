@@ -17,11 +17,11 @@
             <div>下月生效 {{xvalue}}</div>
         </div>
         <div class="date">
-            本月成长值计算周期: {{`${year}年${month - 6}月${getDay(month-1)}日`}} ~
+            本月成长值计算周期: {{`${year-1}年${month - 6}月${getDay(month-1)}日`}} ~
             <span>{{`${year}年${month - 1}月${getDay(month-1)}日`}}</span>
         </div>
         <div class="date">
-            下月成长值计算周期: {{`${year}年${month - 5}月${getDay(month-1)}日`}} ~
+            下月成长值计算周期: {{`${year-1}年${month - 5}月${getDay(month-1)}日`}} ~
             <span>{{`${year}年${month}月${getDay(month-1)}日`}}</span>
         </div>
     </div>
@@ -63,30 +63,37 @@ export default {
     margin-top: 10px;
     padding: 10px;
     background: #fff;
+    .van-row {
+        .van-col {
+            &:nth-child(2) {
+                text-align:right;
+            }
+        }
+    }
     p {
-        font-size: 10px;
+        font-size: 11px;
         color: #999;
         height: 25px;
         line-height: 25px;
-        margin-bottom: 20px;
+        margin:5px 0 20px 0;
         span {
-            color: #333;
-            font-weight: 500;
+            color: #000;
+
         }
     }
     .date {
-        font-size: 10px;
+        font-size: 11px;
         color: #999;
         span {
             color: #999;
         }
         &:last-child {
-            margin-bottom: 5px;
+            margin: 5px 0;
         }
     }
 }
 .progress {
-    padding-bottom: 40px;
+    padding-bottom: 50px;
     span {
         position: relative;
         display: block;
@@ -99,7 +106,7 @@ export default {
             display: block;
             width: 25px;
             height: 25px;
-            background: url("../../../public/img/member_integral_lock.png")
+            background: url("~assets/img/member/member_integral_lock.png")
                 no-repeat;
             background-size: 100%;
             position: absolute;

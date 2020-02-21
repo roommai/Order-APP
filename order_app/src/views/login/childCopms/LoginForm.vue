@@ -63,8 +63,8 @@
 <script>
 // import Vue from "vue";
 // import { Dialog } from "vant";
-// import { mapMutations } from "vuex";
 import {login} from 'network/login'
+import { mapMutations } from 'vuex'
 export default {
 	props: {
 		meurl: { default: "" }
@@ -79,10 +79,15 @@ export default {
 			forget: "forget" //跳转忘记密码页面
 		};
 	},
+
 	mounted() {
 		this.btn_code();
 	},
+	computed: {
+		
+	},
 	methods: {
+		...mapMutations(["addUser"]),
 		btn_code() {
 			//验证码
 			this.code = `${parseInt(Math.random() * 10)}${parseInt(
@@ -106,6 +111,8 @@ export default {
 				this.$toast("密码格式不正确");
 			} else if (this.code != this.value) {
 				this.$toast("验证码不正确");
+				this.value = ""
+				this.btn_code()
 			} else {
 				var obj = { phone: this.username, upwd: this.password };
 				// this.$api.login(obj).then(data => {
@@ -117,7 +124,16 @@ export default {
 				// 	}
 				// });
 				login(obj).then(res=>{
+					var user = res.user;
 					console.log(res)
+					if (res.code == -1) {
+						this.$toast("手机号或密码错误");
+					} else {
+						console.log(this.$store.state.userList)
+						this.$toast("登录成功");
+						this.$router.go(-1)
+						// this.meurl ? this.$router.push(this.meurl) : this.$router.go(-1);
+					}
 				})
 			}
 		}

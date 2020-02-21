@@ -24,7 +24,6 @@
 import LoginTop from "views/login/childCopms/LoginTop";
 import LoginForm from "views/login/childCopms/LoginForm";
 import ThirdParty from "views/login/childCopms/ThirdParty";
-// import { mapActions } from "vuex";
 export default {
 	components: {
 		LoginTop,
@@ -45,7 +44,6 @@ export default {
 		onClickLeft() {
 			this.meurl ? this.$router.push(this.meurl) : this.$router.go(-1);
 		},
-		// ...mapActions(["getlogin"]),
 		// transmit(data) {
 		// 	this.meurl = data;
 		// }
@@ -54,7 +52,6 @@ export default {
 		// this.bus.$on("transmit", this.transmit);
 	},
 	destroyed() {
-		// this.getlogin();
 	}
 };
 </script>

@@ -3,9 +3,9 @@
 		<router-link to="edit">
 			<img src="~assets/img/me/my_editprofile.png" class="bj" />
 		</router-link>
-		<img :src="serverBaseURL + user_img" class="user_img" />
+		<img :src="serverBaseURL +user_img" class="user_img" />
 		<h4>
-			{{ uname }}
+			{{username}}
 			<img src="~assets/img/me/my_vip_red.png" class="vip" />
 		</h4>
 		<div class="discount">
@@ -19,24 +19,39 @@
 	</div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState,mapMutations } from "vuex";
 
 export default {
 	data() {
 		return {
-			uname: "",
+			username: "",
 			count: 0,
 			vip_money: "",
 			user_img: "/images/user/default.png"
 		};
 	},
+	created() {
+		this.isLogin()
+	},
 	methods: {
-		// ...mapActions(["getlogin"])
+		...mapMutations(["userStatus"]),
+		isLogin() {
+			if(sessionStorage.getItem("user")) {
+				this.userStatus(sessionStorage.getItem("user"))
+			}else {
+				this.$router.push("/login")
+			}
+		}
 	},
 	computed: {
-		...mapState(["serverBaseURL"])
+		...mapState(["serverBaseURL","userList"])
 	},
 	beforeMount() {
+		let userList = JSON.parse(this.userList)
+		console.log(JSON.parse(this.userList))
+		this.user_img = userList.user_img;
+		this.username = userList.uname;
+		this.vip_money = userList.vip_money;
 		// this.$api
 		// 	.get()
 		// 	.then(res => {
@@ -47,7 +62,7 @@ export default {
 		// 	.catch(err => {
 		// 		console.log(err);
 		// 	});
-	}
+	},
 };
 </script>
 <style scoped>
@@ -80,11 +95,15 @@ export default {
 }
 .user_msg > h4 {
 	position: absolute;
-	width: 100%;
 	margin-top: 45px;
+	font-size:14px;
+	text-align: center;
+	width:100%;
 }
 .vip {
+	position:absolute;
 	vertical-align: middle;
+	margin-left:5px;
 	width: 45px;
 }
 .user_msg:before {

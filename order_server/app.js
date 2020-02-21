@@ -38,6 +38,7 @@ app.use( bodyParser.urlencoded({
 
 const userRouter=require("./routes/user.js");
 const ComyRouter=require("./routes/community.js");
+const MemberRouter=require("./routes/member.js");
 
 //中间件来验证发过来的token//拦截直接跳到相应的页面
     // app.use(( req,res,next ) => {
@@ -70,3 +71,4 @@ const ComyRouter=require("./routes/community.js");
 // 挂在路由
 app.use('/users',userRouter)
 app.use('/community',ComyRouter)
+app.use('/member',MemberRouter)

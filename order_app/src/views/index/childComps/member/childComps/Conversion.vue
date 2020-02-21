@@ -10,12 +10,12 @@
 		<div class="swiper-container">
 			<div class="swiper-wrapper">
 				<div class="swiper-slide" v-for="(item, i) of images" :key="i">
-					<img :src="serverBaseURL + item.img_url" />
-					<div>{{ item.description }}</div>
+					<img :src="item.url" />
+					<div>{{ item.title }}</div>
 					<div>
 						<span>{{ item.price }}</span
 						>兑换
-						<span>{{ item.sold }}</span>
+						<span>{{ item.count }}</span>
 					</div>
 				</div>
 			</div>
@@ -26,7 +26,7 @@
 <script>
 import Swiper from "swiper";
 import "swiper/dist/css/swiper.min.css";
-import { mapState } from "vuex";
+// import { mapState } from "vuex";
 export default {
 	data() {
 		return {
@@ -34,25 +34,25 @@ export default {
 			user: 0,
 			images: [
 				{
-					url: require("../../../public/img/vipGrid1.png"),
+					url: require("assets/img/member/vipGrid1.png"),
 					title: "海底捞口袋坚果1盒375克",
 					price: "1380捞币",
 					count: 6100
 				},
 				{
-					url: require("../../../public/img/vipGrid2.png"),
+					url: require("assets/img/member/vipGrid2.png"),
 					title: "海底捞口袋坚果1盒375克",
 					price: "999捞币",
 					count: 618
 				},
 				{
-					url: require("../../../public/img/vipGrid3.png"),
+					url: require("assets/img/member/vipGrid3.png"),
 					title: "海底捞口袋坚果1盒375克",
 					price: "900捞币",
 					count: 342
 				},
 				{
-					url: require("../../../public/img/vipGrid4.png"),
+					url: require("assets/img/member/vipGrid4.png"),
 					title: "海底捞口袋坚果1盒375克",
 					price: "1380捞币",
 					count: 298
@@ -61,21 +61,21 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(["serverBaseURL"])
+		// ...mapState(["serverBaseURL"])
 	},
 	mounted() {
 		var mySwiper = new Swiper(".swiper-container", {
 			slidesPerView: 3,
 			freeMode: false
 		});
-		this.$api
-			.getIndexProduct()
-			.then(res => {
-				this.images = res.data.data;
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		// this.$api
+		// 	.getIndexProduct()
+		// 	.then(res => {
+		// 		this.images = res.data.data;
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err);
+		// 	});
 	}
 };
 </script>
@@ -101,6 +101,7 @@ export default {
 			font-size: 13px;
 			font-weight: 500;
 			color: #999;
+			text-align:right;
 			&:after {
 				content: "";
 				display: inline-block;

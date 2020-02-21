@@ -35,11 +35,24 @@ router.post('/signin', (req,res)=>{
                 if(err) throw err;
                 if(result.affectedRows > 0) {
                     // 注册vip
-                    user.uid = result.insertId;
-                    res.send({code:2,msg:"register successfully",user,token:jwt.generateToken(result[0])})
-                    
-                }else{
-                    res.send({code: -2, msg:"registration failed"}) //注册失败
+                    user.uid = result.insertId;//保存注册的用户id
+                    pool.query("INSERT INTO vip(u_id,vip_regtime) VALUES(?,CURRENT_TIMESTAMP)",[result.insertId],(err,result) => {
+                        if(err) throw err;
+                        user.vip_id = result.insertId; //保存注册的用户vip_id
+                        if(result.affectedRows > 0) {
+                            //查找将时间转化为 2019-5-12格式的
+                            pool.query("SELECT date_format(vip_regTime,'%Y%m%d') FROM vip WHERE vip_id = ?",[user.vip_id],(err,result) => {
+                                if (err) throw err;
+                                if (result.length > 0) {
+                                    vip_card = "86" +result[0]["date_format(vip_regTime,'%Y%m%d')"] + user.vip_id;
+                                    user.vip_card = vip_card;
+                                    res.send({code:2,msg:"register successfully",user,token:jwt.generateToken(result[0])})
+                                }
+                            })
+                        }else{
+                            res.send({code: -2, msg:"registration failed"}) //注册失败
+                        }
+                    })                   
                 }
             })
         }else if (result.length > 0){
@@ -59,7 +72,16 @@ router.post('/signin', (req,res)=>{
                     user.say = result[0].say;
                     user.user_img = result[0].user_img;
                     user.city = result[0].city;
-                    res.send({ code: 1, msg: "login successfully", user,token:jwt.generateToken(result[0]) }); //登录成功
+                    
+                    //找vip表所所有东西
+                    pool.query("SELECT vip_area,date_format(vip_regTime,'%Y%m%d'),vip_id,vip_money,vip_value FROM vip WHERE u_id = ?",[user.uid],(err,result) => {
+                        if (err) throw err;
+                        user.vip_card = "" + result[0].vip_area +  result[0]["date_format(vip_regTime,'%Y%m%d')"] + result[0].vip_id;
+                        user.vip_money = result[0].vip_money;
+                        user.vip_value = result[0].vip_value;
+                        
+                        res.send({ code: 1, msg: "login successfully", user,token:jwt.generateToken(result[0]) }); //登录成功
+                    })
                 }else {
                     res.send({ code: -1, msg: "login failed" }); //登录失败
                   }
@@ -68,6 +90,31 @@ router.post('/signin', (req,res)=>{
     })
 })
 
+
+//是否登录
+router.get("/islogin", (req, res) => {
+    var uid = req.session.uid;
+    if (!uid) {
+      res.send({ code: -5, msg: "未登录" });
+      return;
+    } else {
+      res.send({ code: 5, msg: "已登录" });
+    }
+  });
+
+// 修改密码
+router.put("/forget", (req, res) => {
+    var { phone, upwd } = req.body;
+    var sql = "UPDATE user SET upwd = md5(?) WHERE phone = ?";
+    pool.query(sql, [upwd, phone], (err, result) => {
+      if (err) throw err;
+      if (result.affectedRows > 0) {
+        res.send({ code: 3, msg: "update successful" });
+      } else {
+        res.send({ code: -3, msg: "update failed" });
+      }
+    });
+  });
 
 //更新vuex
 router.get("/Checkuser", (req, res) => {

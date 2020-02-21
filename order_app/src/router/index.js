@@ -9,6 +9,7 @@ const Profile = () => import('index/profile/Profile')
 
 
 const Login = () => import('views/login/Login')
+const Forget = () => import('views/forget/Forget')
 
 Vue.use(VueRouter)
 const routes = [
@@ -47,6 +48,11 @@ const routes = [
         component: Login,
 
     },
+    {
+        path: '/forget',
+        component: Forget,
+        meta: {title: '用户修改密码'}
+    }
     
 ]
 const router = new VueRouter({   

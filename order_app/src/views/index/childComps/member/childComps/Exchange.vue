@@ -32,21 +32,21 @@ export default {
 		};
 	},
 	created() {
-		this.$api
-			.getIndexProduct()
-			.then(res => {
-				this.commodity = res.data.data;
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		// this.$api
+		// 	.getIndexProduct()
+		// 	.then(res => {
+		// 		this.commodity = res.data.data;
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err);
+		// 	});
 	}
 };
 </script>
 
 <style lang="scss" scoped>
 @function ur($name) {
-	@return "../../../public/img/" + $name;
+	@return "~assets/img/member/" + $name;
 }
 .exchange {
 	background: #fff;
@@ -83,7 +83,7 @@ export default {
 			}
 		}
 		.van-col {
-			height: 70px;
+			height: 85px;
 			p {
 				&:nth-child(1) {
 					margin-top: 10px;

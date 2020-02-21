@@ -8,3 +8,9 @@ export function login(params) {
         data: qs.stringify(params)
     })
 }
+
+export function GetIsLogin(){
+    return request({
+        url: '/users/islogin'
+    })
+}
