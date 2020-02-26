@@ -71,7 +71,8 @@
 	</div>
 </template>
 <script>
-// import { mapState } from "vuex";
+import { mapState } from "vuex";
+import { getmyfollow} from 'network/community';
 export default {
 	data() {
 		return {
@@ -94,7 +95,20 @@ export default {
 			// console.log(this.pageNumber);
 			// console.log(this.pageSize);
 			// 异步更新数据
-			// setTimeout(() => {
+			setTimeout(() => {
+				const pageNumber = (this.pageNumber-1) * this.pageSize;
+				const pageSize = this.pageSize
+				getmyfollow(pageNumber,pageSize).then(res=>{
+
+					if (res.code > 0) {
+						this.posts = this.posts.concat(res.result);
+						this.loading = false;
+						this.pageNumber++;
+					console.log(this.posts)						
+					} else {
+						this.finished = true;
+					}
+				})
 			// 	this.$api
 			// 		.myFollow({
 			// 			pageNumber: (this.pageNumber - 1) * this.pageSize,
@@ -114,7 +128,7 @@ export default {
 			// 		.catch(err => {
 			// 			this.error = true;
 			// 		});
-			// }, 1000);
+			}, 1000);
 		},
 		changeChinese(time) {
 			switch (new Date(time).getDay()) {
@@ -162,7 +176,7 @@ export default {
 		}
 	},
 	computed: {
-		// ...mapState(["serverBaseURL", "bool"])
+		...mapState(["serverBaseURL", "bool"])
 	},
 	created() {
 		// this.$api

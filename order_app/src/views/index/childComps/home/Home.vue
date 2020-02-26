@@ -66,7 +66,7 @@
             <van-swipe :autoplay="3000" indicator-color="#999">
                 <van-swipe-item v-for="(item, index) of images" :key="index">
                     <img
-                        :src="item"
+                        :src="serverBaseURL + item.img_url"
                         width="100%"
                         height="100%"
                     />
@@ -83,7 +83,7 @@
 			</div>
 			<div class="comm">
 				<div v-for="(item, i) of commodity" :key="i" class="comm_shop">
-					<img :src=" item.url" alt class="comm_img" />
+					<img :src=" serverBaseURL + item.img_url" alt class="comm_img" />
 					<p class="comm_title">{{ item.description }}</p>
 					<span class="comm_lb">{{ item.price }} 捞币</span>
 					<span class="comm_ch">兑换{{ item.sold }}</span>
@@ -102,7 +102,7 @@
 				<div class="swiper-container">
 					<div class="swiper-wrapper">
 						<div class="swiper-slide" v-for="(item, i) of topic" :key="i">
-							<img :src="item" alt />
+							<img :src="serverBaseURL + item.img_url" alt />
 						</div>
 					</div>
 				</div>
@@ -113,6 +113,7 @@
 
 <script>
 import HomeHeader from "index/home/childComps/HomeHeader";
+import {getIndexProduct,getIndexCarousel1,getIndexCarousel2} from 'network/index';
 import Swiper from "swiper";
 import "swiper/dist/css/swiper.min.css";
 import { mapState } from "vuex";
@@ -123,48 +124,18 @@ export default {
     data() {
         return {
             value: "",
-            images: [
-				require("assets/img/index/banner1.jpg"),
-				require("assets/img/index/banner2.jpg"),
-				require("assets/img/index/banner3.jpg"),
-				require("assets/img/index/banner4.jpg")
-            ],
-            commodity: [
-				{
-					url: require("assets/img/index/shop1.png"),
-					title: "海底捞口袋坚果1盒375克",
-					laobi: "1380捞币",
-					exchange: "兑换6719"
-				},
-				{
-					url: require("assets/img/index/shop2.png"),
-					title: "小龙虾1盒装 6~8钱/只",
-					laobi: "￥30+399捞币",
-					exchange: "兑换9"
-				},
-				{
-					url: require("assets/img/index/shop3.png"),
-					title: "海底捞 手做牛油火锅底料",
-					laobi: "1249捞币",
-					exchange: "兑换374"
-				},
-				{
-					url: require("assets/img/index/shop4.png"),
-					title: "海底捞创意环保帆布购物袋",
-					laobi: "580捞币",
-					exchange: "兑换1164"
-				}
-            ],
+            images: [],
+            commodity: [],
             topic: [
-				require("assets/img/index/1.png"),
+                require("assets/img/index/1.png"),
 				require("assets/img/index/2.png"),
 				require("assets/img/index/3.png"),
 				require("assets/img/index/4.png")
-			]
+            ]
         }
     },
     computed:{
-        ...mapState(["bool"])
+        ...mapState(["bool","serverBaseURL"])
     },
     methods: {
         search() {
@@ -190,7 +161,16 @@ export default {
 			slidesPerGroup: 1,
 			spaceBetween: 20,
 			freeMode: true
-		});
+        });
+        getIndexProduct().then(res=>{
+			this.commodity = res.result;
+        })
+        getIndexCarousel1().then(res=>{
+            this.images = res.data
+        })
+        getIndexCarousel2().then(res=>{
+            this.topic = res.data
+        })
     },
     beforeDestroy() {
 		document.removeEventListener("scroll", this.getTop);

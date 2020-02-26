@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapMutations } from "vuex";
+import {Checkuser} from 'network/operation'
 export default {
 	data() {
 		return {
@@ -35,24 +36,36 @@ export default {
 			vip_money: ""
 		};
 	},
-	methods: {},
+	methods: {
+		...mapMutations(["changelogin"]),
+		getUser() {
+			var token = sessionStorage.getItem("token")
+			if(token){
+				Checkuser().then(res=>{
+					console.log(res)
+					if(res.status == 403){
+						sessionStorage.clear()
+						this.changelogin(true)
+					}else{
+						this.uname = res.user.uname;
+						this.vip_money = res.user.vip_money;
+						this.salVal = res.user.salary;
+						this.email = res.user.email;
+						this.signVal = res.user.say;
+						this.vip_card = res.user.vip_card;
+					}
+				}).catch(err => {
+					console.log(err);
+				});
+
+			}
+		}
+	},
 	computed: {
 		...mapState(["data"])
 	},
 	created() {
-		// this.$api
-		// 	.get()
-		// 	.then(res => {
-		// 		this.uname = res.data.user.uname;
-		// 		this.vip_money = res.data.user.vip_money;
-		// 		this.salVal = res.data.user.salary;
-		// 		this.email = res.data.user.email;
-		// 		this.signVal = res.data.user.say;
-		// 		this.vip_card = res.data.user.vip_card;
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	});
+		this.getUser()
 	}
 };
 </script>
@@ -90,7 +103,7 @@ export default {
 			color: #f1f1f1;
 		}
 		&:nth-child(2) {
-			margin-top: 5px;
+			margin-top: 10px;
 			background: #cb1017;
 			padding: 1px 5px;
 			border-radius: 10px;
@@ -99,7 +112,7 @@ export default {
 		}
 		&:nth-child(3) {
 			font-size: 10px;
-			margin-top: 15px;
+			margin-top: 40px;
 			&:after {
 				content: "";
 				display: block;
@@ -152,7 +165,7 @@ export default {
 	p {
 		color: #fdfdfd;
 		font-size: 10px;
-		margin-top: 38px;
+		margin-top: 65px;
 	}
 }
 </style>

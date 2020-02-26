@@ -9,13 +9,13 @@
 		</van-row>
 		<div class="swiper-container">
 			<div class="swiper-wrapper">
-				<div class="swiper-slide" v-for="(item, i) of images" :key="i">
-					<img :src="item.url" />
-					<div>{{ item.title }}</div>
+				<div class="swiper-slide" v-for="(item, i) in images" :key="i">
+					<img :src="serverBaseURL + item.img_url" />
+					<div>{{ item.description }}</div>
 					<div>
 						<span>{{ item.price }}</span
 						>兑换
-						<span>{{ item.count }}</span>
+						<span>{{ item.sold }}</span>
 					</div>
 				</div>
 			</div>
@@ -26,47 +26,29 @@
 <script>
 import Swiper from "swiper";
 import "swiper/dist/css/swiper.min.css";
-// import { mapState } from "vuex";
+import { mapState } from "vuex";
+import {getIndexProduct} from 'network/index';
 export default {
 	data() {
 		return {
 			coin: 0,
 			user: 0,
-			images: [
-				{
-					url: require("assets/img/member/vipGrid1.png"),
-					title: "海底捞口袋坚果1盒375克",
-					price: "1380捞币",
-					count: 6100
-				},
-				{
-					url: require("assets/img/member/vipGrid2.png"),
-					title: "海底捞口袋坚果1盒375克",
-					price: "999捞币",
-					count: 618
-				},
-				{
-					url: require("assets/img/member/vipGrid3.png"),
-					title: "海底捞口袋坚果1盒375克",
-					price: "900捞币",
-					count: 342
-				},
-				{
-					url: require("assets/img/member/vipGrid4.png"),
-					title: "海底捞口袋坚果1盒375克",
-					price: "1380捞币",
-					count: 298
-				}
-			]
+			images: [{},{},{},{}]
 		};
 	},
 	computed: {
-		// ...mapState(["serverBaseURL"])
+		...mapState(["serverBaseURL"])
 	},
 	mounted() {
 		var mySwiper = new Swiper(".swiper-container", {
 			slidesPerView: 3,
 			freeMode: false
+		});
+		getIndexProduct().then(res=>{
+			this.images = res.result;
+		})
+		.catch(err => {
+			console.log(err);
 		});
 		// this.$api
 		// 	.getIndexProduct()

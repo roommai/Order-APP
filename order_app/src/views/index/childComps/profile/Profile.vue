@@ -1,5 +1,10 @@
 <template>
     	<div class="me">
+				<nav-bar class="mheader" v-show="isShow">
+				<div slot="center" class="top-center">
+					我的
+				</div>
+			</nav-bar>
             <div class="sm">
                 <img src="~assets/img/me/my_member_code.png" class="ewm" />
             </div>
@@ -56,17 +61,24 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState,mapMutations } from 'vuex'
+
+import {debounce} from "common/utils"
+
+import NavBar from 'components/common/navbar/NavBar'
 
 import MeNotLogin from 'index/profile/childComps/MeNotLogin'
 import MeLogin from 'index/profile/childComps/MeLogin'
 export default {
     components: {
         MeNotLogin,
-        MeLogin
+		MeLogin,
+		
+		NavBar
     },
     data() {
         return {
+			isShow:false,
             orders: [
 				{ url: require("assets/img/me/stores_row_num.png"), name: "排号" },
 				{ url: require("assets/img/me/my_reserve_order.png"), name: "预订" },
@@ -97,15 +109,45 @@ export default {
         ...mapState(["bool"])
     },
     methods: {
+		...mapMutations(["changelogin"]),
         setting() {
             this.$router.push("/setting")
-        },
-    }
+		},
+		showNav() {
+			var heights =
+				window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+            if( heights >= 80) {
+				this.isShow=true;
+				return
+            }else {
+				this.isShow=false;
+			}
+		},
+		isLogin() {
+			if(!sessionStorage.getItem('token')){
+				this.changelogin(true)
+			}
+		}
+	},
+	created() {
+		this.isLogin()
+	},
+	mounted() {
+		
+		 window.addEventListener("scroll", debounce(this.showNav,50));
+	},
 }
 </script>
 
 <style lang="scss" scoped>
-
+ .mheader{
+        position:fixed;
+        left:0;
+        right:0;
+        top:0;
+        z-index:9;
+        background-color:#fff;
+    }
 .sm {
 	position: relative;
 	height: 20px;

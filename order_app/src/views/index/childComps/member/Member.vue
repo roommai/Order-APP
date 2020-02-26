@@ -6,7 +6,7 @@
             </div>
             <div slot="right" class="top-right">帮助</div>
         </nav-bar>
-        <mvip v-if="false" @click.native="getbool()"></mvip>
+        <mvip v-if="bool" @click.native="getbool"></mvip>
 		<login-vip v-else></login-vip>
         <van-grid :border="false" :column-num="4" v-if="bool
         ">
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState,mapMutations} from 'vuex'
 import { vipCarousel } from 'network/member'
 
 import NavBar from 'components/common/navbar/NavBar'
@@ -95,19 +95,33 @@ export default {
         ...mapState(["bool","serverBaseURL"])
     },
     methods: {
+        ...mapMutations(["changelogin"]),
+        getbool() {
+	        this.$router.push("/login");
+        },
         getI(i) {
 			this.idx = i;
 			if (i < 7) {
-				this.$router.push("/cradswipe");
+				this.$router.push("/cardswiper");
 			}
-		},
+        },
+        getUser() {
+            var token = sessionStorage.getItem("token")
+            if(!token){
+                this.changelogin(true)
+            }
+        }
     },
     created() {
         vipCarousel().then(res=>{
             this.swiper = res.result;
 
         })
-    }
+        this.getUser()
+    },
+    beforeDestroy: function() {
+		this.bus.$emit("getI", this.idx);
+	}
 }
 </script>
 

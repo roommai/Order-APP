@@ -46,7 +46,7 @@ router.post('/signin', (req,res)=>{
                                 if (result.length > 0) {
                                     vip_card = "86" +result[0]["date_format(vip_regTime,'%Y%m%d')"] + user.vip_id;
                                     user.vip_card = vip_card;
-                                    res.send({code:2,msg:"register successfully",user,token:jwt.generateToken(result[0])})
+                                    res.send({code:2,msg:"register successfully",user,token:jwt.generateToken(user.uid)})
                                 }
                             })
                         }else{
@@ -72,15 +72,13 @@ router.post('/signin', (req,res)=>{
                     user.say = result[0].say;
                     user.user_img = result[0].user_img;
                     user.city = result[0].city;
-                    
                     //找vip表所所有东西
                     pool.query("SELECT vip_area,date_format(vip_regTime,'%Y%m%d'),vip_id,vip_money,vip_value FROM vip WHERE u_id = ?",[user.uid],(err,result) => {
                         if (err) throw err;
                         user.vip_card = "" + result[0].vip_area +  result[0]["date_format(vip_regTime,'%Y%m%d')"] + result[0].vip_id;
                         user.vip_money = result[0].vip_money;
                         user.vip_value = result[0].vip_value;
-                        
-                        res.send({ code: 1, msg: "login successfully", user,token:jwt.generateToken(result[0]) }); //登录成功
+                        res.send({ code: 1, msg: "login successfully", user,token:jwt.generateToken(user.uid) }); //登录成功
                     })
                 }else {
                     res.send({ code: -1, msg: "login failed" }); //登录失败
@@ -102,7 +100,7 @@ router.get("/islogin", (req, res) => {
     }
   });
 
-// 修改密码
+// 找回密码
 router.put("/forget", (req, res) => {
     var { phone, upwd } = req.body;
     var sql = "UPDATE user SET upwd = md5(?) WHERE phone = ?";
@@ -115,6 +113,49 @@ router.put("/forget", (req, res) => {
       }
     });
   });
+//   修改密码
+  router.put("/updatePassword", (req, res) => {
+    pool.query(
+      "select upwd from user where id = ?",
+      [req.uid],
+      (err, result) => {
+        if (result[0].upwd == md5(req.body.oldPwd)) {
+          pool.query(
+            "update user set upwd = md5(?) where id = ?",
+            [req.body.newPwd, req.uid],
+            (err, result) => {
+              if (err) throw err;
+              if (result.affectedRows > 0) {
+                res.send({ code: 8, msg: "update successful" });
+              } else {
+                res.send({ code: -8, msg: "update failed" });
+              }
+            }
+          );
+        } else {
+          res.send({ code: -9, msg: "password error" });
+        }
+      }
+    );
+  });
+
+//更改个人信息
+router.put("/update", (req, res) => {
+    var obj = req.body;
+    pool.query(
+      "update user set ? where id = ?",
+      [obj, req.uid],
+      (err, result) => {
+        if (err) throw err;
+        if (result.affectedRows > 0) {
+          res.send({ code: 6, msg: "update successful" });
+        } else {
+          res.send({ code: -6, msg: "update failed" });
+        }
+      }
+    );
+});
+  
 
 //更新vuex
 router.get("/Checkuser", (req, res) => {
@@ -122,6 +163,7 @@ router.get("/Checkuser", (req, res) => {
     //   res.send({ code: -7, msg: "not log in" });
     //   return;
     // }
+    var uid = req.uid;
     var user = {};
     // var uid = req.session.uid;
     var sql =
@@ -131,6 +173,7 @@ router.get("/Checkuser", (req, res) => {
       if (err) throw err;
       if (result.length > 0) {
         user.uid = result[0].id;
+        user.phone = result[0].phone;
         user.uname = result[0].uname;
         user.sex = result[0].sex;
         user.real_name = result[0].real_name;
@@ -140,8 +183,20 @@ router.get("/Checkuser", (req, res) => {
         user.say = result[0].say;
         user.user_img = result[0].user_img;
         user.city = result[0].city;
-          res.send({ code: 7, user });
-          
+        pool.query(
+            "SELECT vip_area,date_format(vip_regTime,'%Y%m%d'),vip_id,vip_money,vip_value FROM vip WHERE u_id = ?",[uid],
+            (err, result) => {
+              if (err) throw err;  
+              user.vip_card =
+                "" +
+                result[0].vip_area +
+                result[0]["date_format(vip_regTime,'%Y%m%d')"] +
+                result[0].vip_id;
+              user.vip_money = result[0].vip_money;
+              user.vip_value = result[0].vip_value;
+    
+              res.send({ code: 7, user });
+            })         
       }
     });
   });

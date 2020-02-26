@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '../store'
+import qs from "qs";
 
 export function request(config){
     const instance = axios.create({
@@ -9,6 +10,17 @@ export function request(config){
     // axios拦截器
         //请求拦截
     instance.interceptors.request.use(config=>{
+        // if(config.method==="post" || config.method==="put"){
+        //     //让请求发送的参数对象转为json字符串
+        //     config.data=qs.stringify(config.data)
+        // }
+        if(sessionStorage.getItem("token")){
+            config.headers.token=sessionStorage.getItem("token");
+        }
+        if(localStorage.getItem("token")){
+            // 请求都带token数据
+            config.headers.token=localStorage.getItem("token");
+        }
         return config
     },err=>{
         // console.log(err);

@@ -23,7 +23,7 @@ const store = new Vuex.Store({
 			},
 			isLogin(state){
 				return isLogin
-			}
+			},
 		},
     mutations: {
 			changelogin(state,checkbool){
@@ -40,16 +40,16 @@ const store = new Vuex.Store({
 					state.userList = null;
 					state.bool = true ;
 				}
+			},
+			getTotal(state, total) {
+				// console.log(total);
+				state.setTotal = total;
+				// console.log(state.total);
+			},
+			setShopName(state, name) {
+				// console.log(name);
+				state.shop_name = name;
 			}
-		// getTotal(state, total) {
-		// 	// console.log(total);
-		// 	state.setTotal = total;
-		// 	// console.log(state.total);
-		// },
-		// setShopName(state, name) {
-		// 	console.log(name);
-		// 	state.shop_name = name;
-		// }
 		},
     actions: {
 			setUser(context,user) {

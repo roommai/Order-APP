@@ -115,12 +115,14 @@ export default {
 		};
 	},
 	computed: {
-		...mapState(["data", "serverBaseURL"])
+		...mapState([ "serverBaseURL"])
 	},
 	created() {
-		// Checkuser().then(res => {
-		// 	console.log(res)
-		// })
+		Checkuser().then(res => {
+			console.log(res)
+			this.uname = res.user.uname;
+			this.user_img = res.user.user_img;
+		})
 		// this.$api
 		// 	.get()
 		// 	.then(res => {

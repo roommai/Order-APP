@@ -22,3 +22,21 @@ export function Checkuser() {
         url: '/users/Checkuser'
     })
 }
+
+// 保存关注
+export function follow(params) {
+    return request({
+        url: '/community/follow',
+        params,
+    })
+}
+
+export function getmyfollow(pageNumber,pageSize){
+    return request({
+        url: '/community/myfollow',
+        params:{
+            pageNumber,
+            pageSize
+        }
+    })
+}

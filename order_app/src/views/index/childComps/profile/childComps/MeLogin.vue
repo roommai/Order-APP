@@ -38,8 +38,6 @@ export default {
 		isLogin() {
 			if(sessionStorage.getItem("user")) {
 				this.userStatus(sessionStorage.getItem("user"))
-			}else {
-				this.$router.push("/login")
 			}
 		}
 	},
@@ -52,16 +50,6 @@ export default {
 		this.user_img = userList.user_img;
 		this.username = userList.uname;
 		this.vip_money = userList.vip_money;
-		// this.$api
-		// 	.get()
-		// 	.then(res => {
-		// 		this.uname = res.data.user.uname;
-		// 		this.vip_money = res.data.user.vip_money;
-		// 		this.user_img = res.data.user.user_img;
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	});
 	},
 };
 </script>

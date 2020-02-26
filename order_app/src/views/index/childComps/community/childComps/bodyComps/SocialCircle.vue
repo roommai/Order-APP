@@ -23,7 +23,7 @@
 					</van-col>
 					<van-col span="8">
 						<button type="primary" @click="alertMenu" class="fx">···</button>
-						<button class="gz" @click="guanzhu" :data-user="item.u_id">
+						<button class="gz" @click="guanzhu" :data-user="item.u_id" >
 							+ 关注
 						</button>
 						<van-action-sheet
@@ -74,10 +74,12 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import { getNew } from 'network/community';
+import { follow,getNew} from 'network/community';
 export default {
 	data() {
 		return {
+			befollow:[],
+			befollow1:[],
 			//上拉加载更多组件数据
 			posts: [], //循环的数据
 			loading: false, //是否在加载状态
@@ -155,19 +157,33 @@ export default {
 				this.$toast("请先登录");
 				this.$router.push("/login");
 			} else {
-				this.$api
-					.follow({ user: e.toElement.dataset.user })
-					.then(res => {
-						if (res.data.code == 1) {
+				follow({ user: e.toElement.dataset.user }).then(res=>{
+					console.log(res)
+					if(res.status == 403){
+						this.$toast(msg)
+						this.$router.push("/login");
+					}else{
+						if (res.code == 1) {
 							this.$toast("关注成功");
 							eee.style.display = "none";
 						} else {
 							this.$toast("关注失败");
 						}
-					})
-					.catch(err => {
-						this.$toast("关注失败");
-					});
+					}
+				})
+				// this.$api
+				// 	.follow({ user: e.toElement.dataset.user })
+				// 	.then(res => {
+				// 		if (res.data.code == 1) {
+				// 			this.$toast("关注成功");
+				// 			eee.style.display = "none";
+				// 		} else {
+				// 			this.$toast("关注失败");
+				// 		}
+				// 	})
+				// 	.catch(err => {
+				// 		this.$toast("关注失败");
+				// 	});
 			}
 		},
 		like(e) {
@@ -184,16 +200,7 @@ export default {
 	computed: {
 		...mapState(["serverBaseURL", "bool"])
 	},
-	created() {
-		// this.$api
-		// 	.getNewPosts({ pageNumber: 0, pageSize: 5 })
-		// 	.then(res => {
-		// 		this.posts = res.data.result;
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	});
-	}
+	
 };
 </script>
 <style scoped>

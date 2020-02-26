@@ -22,9 +22,10 @@ export default {
 	},
 	methods: {
 		getbool() {
-			this.$emit("getb",)
-			// this.$emit("getb", this.bool);
-			this.$router.push("/login");
+		// 	console.log("1111")
+		// 	// this.$emit("getb",)
+		// 	// this.$emit("getb", this.bool);
+		// 	this.$router.push("/login");
 		}
 	}
 };
